@@ -1,0 +1,168 @@
+/* Custom CSS Dosyası - Özelleştirebilirsiniz */
+
+@page {
+    size: A4;
+    margin: 2.5cm;
+    @top-center {
+        content: "Özel Başlık";
+        font-size: 10pt;
+        color: #666;
+    }
+    @bottom-right {
+        content: "Sayfa " counter(page) " / " counter(pages);
+        font-size: 9pt;
+        color: #999;
+    }
+}
+
+body {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 12pt;
+    line-height: 1.8;
+    color: #2c3e50;
+    background-color: #ffffff;
+}
+
+h1 {
+    font-size: 28pt;
+    font-weight: bold;
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    color: #1a252f;
+    border-bottom: 4px solid #e74c3c;
+    padding-bottom: 0.4em;
+    text-align: center;
+}
+
+h2 {
+    font-size: 22pt;
+    font-weight: bold;
+    margin-top: 1.2em;
+    margin-bottom: 0.6em;
+    color: #2c3e50;
+    border-left: 5px solid #3498db;
+    padding-left: 0.5em;
+}
+
+h3 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: #34495e;
+}
+
+p {
+    margin-top: 0.8em;
+    margin-bottom: 0.8em;
+    text-align: justify;
+    text-indent: 1.5em;
+}
+
+code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.95em;
+    background-color: #ecf0f1;
+    padding: 0.3em 0.5em;
+    border-radius: 4px;
+    color: #c0392b;
+    border: 1px solid #bdc3c7;
+}
+
+pre {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 1.5em;
+    overflow-x: auto;
+    margin: 1.5em 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+    color: white;
+    border: none;
+}
+
+blockquote {
+    border-left: 5px solid #f39c12;
+    margin: 1.5em 0;
+    padding: 1em 1.5em;
+    background-color: #fff9e6;
+    font-style: italic;
+    border-radius: 0 5px 5px 0;
+}
+
+ul, ol {
+    margin: 1em 0;
+    padding-left: 2.5em;
+}
+
+li {
+    margin: 0.5em 0;
+    line-height: 1.6;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: bold;
+    padding: 0.8em;
+    text-align: left;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 0.7em;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tr:hover {
+    background-color: #e8f4f8;
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    border-bottom: 1px dotted #3498db;
+}
+
+a:hover {
+    color: #2980b9;
+    border-bottom: 1px solid #2980b9;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    margin: 1.5em auto;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+hr {
+    border: none;
+    border-top: 3px solid #ecf0f1;
+    margin: 3em 0;
+    border-radius: 2px;
+}
+
+/* Emoji desteği */
+.emoji {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 1.2em;
+}
+
