@@ -1,144 +1,144 @@
 # Markdown to PDF Converter 📄
 
-Markdown dosyalarını profesyonel PDF'lere çeviren Python programı. Custom CSS desteği ve emoji desteği içerir.
+A Python program that converts Markdown files to professional PDFs. Includes custom CSS support and emoji support.
 
-## Özellikler ✨
+## Features ✨
 
-- 🖥️ **Grafik Arayüz (GUI)**: Kullanıcı dostu grafik arayüz
-- 💻 **Komut Satırı**: Terminal üzerinden kullanım
-- 🎨 **Custom CSS Desteği**: Kendi CSS dosyanızı kullanabilirsiniz
-- 😊 **Emoji Desteği**: Emojiler PDF'de düzgün görüntülenir
-- 📝 **Zengin Markdown Desteği**: Tablolar, kod blokları, syntax highlighting
-- 🔢 **Sayfa Numaralandırma**: Otomatik sayfa numaraları
-- 📊 **Tablo Desteği**: Markdown tabloları güzel görünür
-- 💻 **Kod Blokları**: Syntax highlighting ile kod blokları
-- 🎯 **Wildcard Desteği**: Birden fazla dosyayı tek seferde işleyebilirsiniz
-- 📊 **İlerleme Takibi**: GUI'de işlem durumu ve loglar
+- 🖥️ **Graphical Interface (GUI)**: User-friendly graphical interface
+- 💻 **Command Line**: Use from terminal
+- 🎨 **Custom CSS Support**: Use your own CSS file
+- 😊 **Emoji Support**: Emojis display properly in PDF
+- 📝 **Rich Markdown Support**: Tables, code blocks, syntax highlighting
+- 🔢 **Page Numbering**: Automatic page numbers
+- 📊 **Table Support**: Markdown tables look great
+- 💻 **Code Blocks**: Code blocks with syntax highlighting
+- 🎯 **Wildcard Support**: Process multiple files at once
+- 📊 **Progress Tracking**: Process status and logs in GUI
 
-## Kurulum 🚀
+## Installation 🚀
 
-1. Gerekli paketleri yükleyin:
+1. Install required packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**Not**: WeasyPrint bazı sistem bağımlılıkları gerektirebilir:
+**Note**: WeasyPrint may require some system dependencies:
 
 - **macOS**: `brew install cairo pango gdk-pixbuf libffi`
 - **Ubuntu/Debian**: `sudo apt-get install python3-cffi python3-brotli libpango-1.0-0 libpangoft2-1.0-0`
-- **Windows**: Genellikle otomatik kurulur
+- **Windows**: Usually installs automatically
 
-## Kullanım 📖
+## Usage 📖
 
-### Grafik Arayüz (GUI) 🖥️
+### Graphical Interface (GUI) 🖥️
 
-En kolay kullanım için grafik arayüzü kullanabilirsiniz:
+You can use the graphical interface for the easiest usage:
 
-**Tek komut ile açmak:**
+**Open with a single command:**
 ```bash
 ./md2pdf
 ```
 
-veya
+or
 
 ```bash
 python md_to_pdf_gui.py
 ```
 
-**Her yerden erişmek için PATH'e ekleyin:**
+**Add to PATH for access from anywhere:**
 ```bash
-# macOS/Linux için ~/.zshrc veya ~/.bashrc dosyasına ekleyin:
+# For macOS/Linux, add to ~/.zshrc or ~/.bashrc file:
 export PATH="$PATH:/Users/tahsinmert/Desktop/md_to_pdf"
 
-# Sonra her yerden çalıştırabilirsiniz:
+# Then you can run from anywhere:
 md2pdf
 ```
 
-GUI özellikleri:
-- 📁 Dosya seçme diyalogları
-- 🎨 CSS dosyası seçme (opsiyonel)
-- 📄 Çıktı PDF dosyası belirleme
-- 📊 İlerleme çubuğu
-- 📝 İşlem logları
-- ✅ Başarı/hata mesajları
-- 🚀 Tek tıkla dönüştürme
+GUI features:
+- 📁 File selection dialogs
+- 🎨 CSS file selection (optional)
+- 📄 Output PDF file specification
+- 📊 Progress bar
+- 📝 Process logs
+- ✅ Success/error messages
+- 🚀 One-click conversion
 
-### Komut Satırı Kullanımı 💻
+### Command Line Usage 💻
 
-#### Temel Kullanım
-
-```bash
-python md_to_pdf.py dosya.md
-```
-
-Bu komut `dosya.pdf` dosyasını oluşturur.
-
-#### Çıktı Dosyası Belirtme
+#### Basic Usage
 
 ```bash
-python md_to_pdf.py dosya.md -o cikti.pdf
+python md_to_pdf.py file.md
 ```
 
-#### Custom CSS Kullanma
+This command creates `file.pdf`.
+
+#### Specify Output File
 
 ```bash
-python md_to_pdf.py dosya.md -c custom.css
+python md_to_pdf.py file.md -o output.pdf
 ```
 
-#### Birden Fazla Dosya İşleme
+#### Using Custom CSS
 
 ```bash
-python md_to_pdf.py dosya1.md dosya2.md dosya3.md
+python md_to_pdf.py file.md -c custom.css
 ```
 
-veya wildcard kullanarak:
+#### Processing Multiple Files
+
+```bash
+python md_to_pdf.py file1.md file2.md file3.md
+```
+
+or using wildcards:
 
 ```bash
 python md_to_pdf.py *.md
 ```
 
-## Örnek Markdown Dosyası
+## Example Markdown File
 
-Programı test etmek için `ornek.md` dosyasını kullanabilirsiniz:
+You can use the `ornek.md` file to test the program:
 
 ```bash
 python md_to_pdf.py ornek.md
 ```
 
-## Custom CSS Özelleştirme 🎨
+## Custom CSS Customization 🎨
 
-`custom.css` dosyasını düzenleyerek PDF'inizin görünümünü tamamen özelleştirebilirsiniz. Örnek bir CSS dosyası projede mevcuttur.
+You can fully customize your PDF's appearance by editing the `custom.css` file. An example CSS file is available in the project.
 
-### CSS Özellikleri
+### CSS Features
 
-- Sayfa boyutu ve kenar boşlukları
-- Font aileleri ve boyutları
-- Renkler ve arka planlar
-- Tablo stilleri
-- Kod blokları stilleri
-- Başlık ve alt bilgi alanları
+- Page size and margins
+- Font families and sizes
+- Colors and backgrounds
+- Table styles
+- Code block styles
+- Header and footer areas
 
-## Desteklenen Markdown Özellikleri
+## Supported Markdown Features
 
-- ✅ Başlıklar (H1-H6)
-- ✅ Paragraflar
-- ✅ **Kalın** ve *italik* metin
-- ✅ Kod blokları ve inline kod
+- ✅ Headings (H1-H6)
+- ✅ Paragraphs
+- ✅ **Bold** and *italic* text
+- ✅ Code blocks and inline code
 - ✅ Syntax highlighting
-- ✅ Tablolar
-- ✅ Listeler (sıralı ve sırasız)
-- ✅ Alıntılar (blockquotes)
-- ✅ Linkler
-- ✅ Resimler
-- ✅ Yatay çizgiler
-- ✅ Emojiler 😊 🎉 ✨
+- ✅ Tables
+- ✅ Lists (ordered and unordered)
+- ✅ Blockquotes
+- ✅ Links
+- ✅ Images
+- ✅ Horizontal rules
+- ✅ Emojis 😊 🎉 ✨
 
-## Sorun Giderme 🔧
+## Troubleshooting 🔧
 
-### WeasyPrint Kurulum Sorunları
+### WeasyPrint Installation Issues
 
-Eğer WeasyPrint kurulumunda sorun yaşıyorsanız:
+If you're having trouble installing WeasyPrint:
 
 **macOS:**
 ```bash
@@ -152,15 +152,14 @@ sudo apt-get install python3-cffi python3-brotli libpango-1.0-0 libpangoft2-1.0-
 pip install weasyprint
 ```
 
-### Emoji Görünmüyor
+### Emojis Not Displaying
 
-Emojilerin düzgün görünmesi için sisteminizde emoji fontları yüklü olmalıdır. macOS ve modern Linux dağıtımlarında genellikle yüklüdür.
+For emojis to display properly, emoji fonts must be installed on your system. They are usually installed on macOS and modern Linux distributions.
 
-## Lisans 📜
+## License 📜
 
-Bu proje özgürce kullanılabilir.
+This project is free to use.
 
-## Katkıda Bulunma 🤝
+## Contributing 🤝
 
-Önerileriniz ve katkılarınız için issue açabilirsiniz!
-
+Feel free to open an issue for your suggestions and contributions!
