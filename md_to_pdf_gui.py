@@ -12,6 +12,7 @@ import threading
 import os
 import subprocess
 import platform
+import tempfile
 from md_to_pdf import convert_md_to_pdf, get_default_css
 
 
@@ -19,17 +20,19 @@ class MarkdownToPDFGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Markdown to PDF Converter 📄")
-        self.root.geometry("800x750")
+        self.root.geometry("900x900")
         self.root.resizable(True, True)
         
         # Değişkenler
         self.md_file_path = tk.StringVar()
+        self.md_mode = tk.StringVar(value="file")  # "file" veya "paste"
         self.css_file_path = tk.StringVar()
         self.css_code = tk.StringVar()
         self.css_mode = tk.StringVar(value="file")  # "file" veya "code"
         self.output_file_path = tk.StringVar()
         self.is_processing = False
         self.css_text_widget = None
+        self.md_text_widget = None
         
         # Stil ayarları
         self.setup_styles()
@@ -77,26 +80,93 @@ class MarkdownToPDFGUI:
         )
         title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
         
-        # Markdown dosyası seçimi
+        # Markdown girişi için LabelFrame
+        md_label_frame = ttk.LabelFrame(main_frame, text="Markdown İçeriği", padding="10")
+        md_label_frame.grid(row=1, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
+        md_label_frame.columnconfigure(0, weight=1)
+        
+        # Markdown modu seçimi (Radio buttons)
+        md_mode_frame = ttk.Frame(md_label_frame)
+        md_mode_frame.grid(row=0, column=0, sticky=tk.W, pady=(0, 10))
+        
+        ttk.Radiobutton(
+            md_mode_frame,
+            text="Dosyadan Seç",
+            variable=self.md_mode,
+            value="file",
+            command=self.toggle_md_mode
+        ).pack(side=tk.LEFT, padx=(0, 20))
+        
+        ttk.Radiobutton(
+            md_mode_frame,
+            text="İçeriği Yapıştır",
+            variable=self.md_mode,
+            value="paste",
+            command=self.toggle_md_mode
+        ).pack(side=tk.LEFT)
+        
+        # Markdown dosyası seçimi frame
+        self.md_file_frame = ttk.Frame(md_label_frame)
+        self.md_file_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=5)
+        self.md_file_frame.columnconfigure(0, weight=1)
+        
         ttk.Label(
-            main_frame,
+            self.md_file_frame,
             text="Markdown Dosyası:",
-            font=('Helvetica', 10)
-        ).grid(row=1, column=0, sticky=tk.W, pady=10)
+            font=('Helvetica', 9)
+        ).grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
         
-        md_frame = ttk.Frame(main_frame)
-        md_frame.grid(row=1, column=1, columnspan=2, sticky=(tk.W, tk.E), pady=10)
-        md_frame.columnconfigure(0, weight=1)
+        md_file_input_frame = ttk.Frame(self.md_file_frame)
+        md_file_input_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=5)
+        md_file_input_frame.columnconfigure(0, weight=1)
         
-        self.md_entry = ttk.Entry(md_frame, textvariable=self.md_file_path, width=50)
+        self.md_entry = ttk.Entry(md_file_input_frame, textvariable=self.md_file_path, width=50)
         self.md_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 5))
         
         ttk.Button(
-            md_frame,
+            md_file_input_frame,
             text="Gözat...",
             command=self.browse_md_file,
             style='Browse.TButton'
         ).grid(row=0, column=1)
+        
+        # Markdown içeriği yapıştırma frame
+        self.md_paste_frame = ttk.Frame(md_label_frame)
+        self.md_paste_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=5)
+        self.md_paste_frame.columnconfigure(0, weight=1)
+        self.md_paste_frame.rowconfigure(1, weight=1)
+        
+        ttk.Label(
+            self.md_paste_frame,
+            text="Markdown İçeriği:",
+            font=('Helvetica', 9)
+        ).grid(row=0, column=0, sticky=tk.W, pady=(0, 5))
+        
+        md_paste_container = ttk.Frame(self.md_paste_frame)
+        md_paste_container.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        md_paste_container.columnconfigure(0, weight=1)
+        md_paste_container.rowconfigure(0, weight=1)
+        
+        self.md_text_widget = scrolledtext.ScrolledText(
+            md_paste_container,
+            height=12,
+            width=70,
+            font=('Courier', 10),
+            wrap=tk.WORD
+        )
+        self.md_text_widget.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Placeholder text
+        self.md_text_widget.insert('1.0', '# Markdown içeriğinizi buraya yapıştırın...\n\nÖrnek:\n# Başlık\n\nBu bir paragraf.\n\n- Liste öğesi 1\n- Liste öğesi 2')
+        self.md_text_widget.config(foreground='gray')
+        self.md_text_widget.bind('<FocusIn>', self._on_md_text_focus_in)
+        self.md_text_widget.bind('<FocusOut>', self._on_md_text_focus_out)
+        
+        # Başlangıçta dosya modunu göster
+        self.toggle_md_mode()
+        
+        # Grid ağırlıkları
+        md_label_frame.rowconfigure(1, weight=1)
         
         # CSS seçimi (opsiyonel)
         css_label_frame = ttk.LabelFrame(main_frame, text="CSS Stilleri (Opsiyonel)", padding="10")
@@ -272,6 +342,27 @@ class MarkdownToPDFGUI:
         css_label_frame.rowconfigure(1, weight=1)
         main_frame.rowconfigure(10, weight=1)
     
+    def toggle_md_mode(self):
+        """Markdown modu değiştiğinde görünümü güncelle"""
+        if self.md_mode.get() == "file":
+            self.md_file_frame.grid()
+            self.md_paste_frame.grid_remove()
+        else:
+            self.md_file_frame.grid_remove()
+            self.md_paste_frame.grid()
+    
+    def _on_md_text_focus_in(self, event):
+        """Markdown text widget'a odaklanıldığında placeholder'ı temizle"""
+        if self.md_text_widget.get('1.0', 'end-1c').strip().startswith('# Markdown içeriğinizi'):
+            self.md_text_widget.delete('1.0', tk.END)
+            self.md_text_widget.config(foreground='black')
+    
+    def _on_md_text_focus_out(self, event):
+        """Markdown text widget'tan odak çıktığında boşsa placeholder ekle"""
+        if not self.md_text_widget.get('1.0', 'end-1c').strip():
+            self.md_text_widget.insert('1.0', '# Markdown içeriğinizi buraya yapıştırın...\n\nÖrnek:\n# Başlık\n\nBu bir paragraf.\n\n- Liste öğesi 1\n- Liste öğesi 2')
+            self.md_text_widget.config(foreground='gray')
+    
     def browse_md_file(self):
         """Markdown dosyası seç"""
         filename = filedialog.askopenfilename(
@@ -349,18 +440,30 @@ class MarkdownToPDFGUI:
     
     def validate_inputs(self):
         """Girdileri doğrula"""
-        if not self.md_file_path.get():
-            messagebox.showerror("Hata", "Lütfen bir Markdown dosyası seçin!")
-            return False
-        
-        md_path = Path(self.md_file_path.get())
-        if not md_path.exists():
-            messagebox.showerror("Hata", f"Markdown dosyası bulunamadı:\n{md_path}")
-            return False
-        
-        if not md_path.suffix.lower() in ['.md', '.markdown', '.txt']:
-            messagebox.showerror("Hata", "Lütfen geçerli bir Markdown dosyası seçin!")
-            return False
+        # Markdown içeriği kontrolü
+        if self.md_mode.get() == "file":
+            if not self.md_file_path.get():
+                messagebox.showerror("Hata", "Lütfen bir Markdown dosyası seçin!")
+                return False
+            
+            md_path = Path(self.md_file_path.get())
+            if not md_path.exists():
+                messagebox.showerror("Hata", f"Markdown dosyası bulunamadı:\n{md_path}")
+                return False
+            
+            if not md_path.suffix.lower() in ['.md', '.markdown', '.txt']:
+                messagebox.showerror("Hata", "Lütfen geçerli bir Markdown dosyası seçin!")
+                return False
+        else:  # paste mode
+            if not self.md_text_widget:
+                messagebox.showerror("Hata", "Markdown içeriği girişi bulunamadı!")
+                return False
+            
+            md_content = self.md_text_widget.get('1.0', tk.END).strip()
+            # Placeholder kontrolü
+            if not md_content or md_content.startswith('# Markdown içeriğinizi'):
+                messagebox.showerror("Hata", "Lütfen Markdown içeriğini yapıştırın!")
+                return False
         
         # CSS kontrolü (opsiyonel)
         if self.css_mode.get() == "file" and self.css_file_path.get():
@@ -397,8 +500,24 @@ class MarkdownToPDFGUI:
     def _convert_thread(self):
         """Dönüştürme işlemini thread'de çalıştır"""
         try:
-            md_file = self.md_file_path.get()
-            output_file = self.output_file_path.get() if self.output_file_path.get() else None
+            # Markdown içeriğini al
+            if self.md_mode.get() == "file":
+                md_file = self.md_file_path.get()
+                output_file = self.output_file_path.get() if self.output_file_path.get() else None
+                self.log_message(f"Kaynak: {md_file}")
+            else:  # paste mode
+                md_content = self.md_text_widget.get('1.0', tk.END).strip()
+                # Geçici dosya oluştur
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as tmp_file:
+                    tmp_file.write(md_content)
+                    md_file = tmp_file.name
+                self.log_message(f"Kaynak: Yapıştırılan içerik (geçici dosya: {md_file})")
+                
+                # Çıktı dosyası belirlenmemişse varsayılan isim kullan
+                if not self.output_file_path.get():
+                    output_file = "output.pdf"
+                else:
+                    output_file = self.output_file_path.get()
             
             # CSS moduna göre CSS'i belirle
             css_file = None
@@ -420,15 +539,26 @@ class MarkdownToPDFGUI:
                 else:
                     self.log_message("CSS: Varsayılan CSS kullanılıyor")
             
-            self.log_message(f"Kaynak: {md_file}")
-            
             # Dönüştür
             result_path = convert_md_to_pdf(md_file, output_file, css_file, css_string)
+            
+            # Geçici dosyayı sil (eğer paste modundaysa)
+            if self.md_mode.get() == "paste" and os.path.exists(md_file):
+                try:
+                    os.unlink(md_file)
+                except:
+                    pass
             
             # Başarılı
             self.root.after(0, self._conversion_success, result_path)
             
         except Exception as e:
+            # Geçici dosyayı temizle (hata durumunda)
+            if self.md_mode.get() == "paste" and 'md_file' in locals() and os.path.exists(md_file):
+                try:
+                    os.unlink(md_file)
+                except:
+                    pass
             # Hata
             self.root.after(0, self._conversion_error, str(e))
     
